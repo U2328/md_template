@@ -1,9 +1,18 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional, Callable, Generator
+from typing import List, Optional, Callable, Generator, Any
 from pprint import pprint
 import re
+
+
+from .filters import Filter
+
+__all__ = (
+    "Types",
+    "tokenize",
+    "parse",
+)
 
 
 class Types(Enum):
@@ -20,7 +29,7 @@ class Node:
     contents: Optional[str] = None
     parent: Optional[Node] = None
     children: List[Node] = field(default_factory=list)
-    func: Optional[Callable[[str], str]] = None
+    func: Optional[Callable[[Any], str]] = None
 
     def __repr__(self):
         return f"Node(type={self.type}, contents={repr(self.contents)}, children={self.children})"
@@ -69,15 +78,13 @@ def parse(s: str) -> Node:
             ...
         else:
             if tok.type == Types.EXPR:
-                tok.func = compile_expression(tok.contens)
-                if tok.func is None:
+                try:
+                    tok.func = Filter.compile_filters(tok.contents)
+                except Exception as e:
+                    print(e.args[0])
                     tok.type = Types.TEXT
                     tok.contents = r'{{' + tok.contents + r'}}'
             current_node.children.append(tok)
-
-
-def compile_expression(s: str) -> Optional[Callable[[str], str]]:
-    return None
 
 
 if __name__ == "__main__":
