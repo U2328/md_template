@@ -6,14 +6,14 @@ This time not so *hacky*...
     - [x] tokenize
     - [ ] build AST
         * [x] TEXT
-        * [x] EXPR
-        * [ ] STAT
+        * [x] STAT
+        * [ ] ENV
     - maybe optimize AST
 * [ ] apply compiled AST
     - [ ] walk AST & apply
-        * [ ] TEXT
-        * [ ] EXPR
-        * [ ] STAT
+        * [x] TEXT
+        * [x] STAT
+        * [ ] ENV
 * [ ] find a way to put ASR into file
     - [ ] put AT into file
     - [ ] get it out again...

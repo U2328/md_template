@@ -1,56 +1,59 @@
+from __future__ import annotations
 import re
+from functools import partial
 import math
+import ast
 from dateutil import parser as datetime_parser
-from typing import Mapping, Callable, List, Tuple, Any, NoReturn, Type
+from typing import Mapping, Callable, List, Tuple, Any, NoReturn, Type, ClassVar
 
 
-__all__ = (
-    "Filter",
-)
-
-_filter_re = re.compile(r"^(?P<func>[^()]+)(?:\((?P<args>.*)\))?$")
-_arg_re = re.compile(r"(?P<arg>[^(),]+(?:\([^()]*\))?)")
+__all__ = ("Filter",)
 
 
 class Filter:
-    _filters: Mapping[str, Callable] = {}
+    _filters: ClassVar[Mapping[str, Callable]] = {}
 
     @classmethod
-    def compile_filters(cls: Type[Filter], filter_strings: List[str]) -> Filter:
+    def compile_filters(cls: Type[Filter], filter_string: str) -> Filter:
+        parts = filter_string.split("|")
+        target = parts[0]
+        _filters = parts[1:] if len(target) > 1 else None
         filters = []
-        if filter_strings:
-            for filter_string in filter_strings:
-                if filter_string != "":
+        if _filters is not None:
+            for _filter in _filters:
+                if _filter != "":
                     try:
-                        _func, args = cls._parse_filter(filter_string)
+                        _func, _args = _filter.split(":", maxsplit=1)
+                        args = ast.literal_eval(f"[{_args}]")
                         func = cls._filters[_func]
                         filters.append((func, args))
                     except KeyError as e:
-                        raise SyntaxError(f"unkown filter \"{func}\"")
+                        raise SyntaxError(f'unkown filter "{_func}"')
                     except AttributeError as e:
                         raise SyntaxError("illegal filter syntax")
                 else:
                     raise SyntaxError("illegal filter syntax")
-        return Filter(filters)
-
-    @staticmethod
-    def _parse_filter(filter_string: str) -> Tuple[str, List[str]]:
-        match = _filter_re.fullmatch(filter_string)
-        func = match.group("func")
-        args = []
-        if match.group("args"):
-            for match in _arg_re.finditer(match.group("args")):
-                args.append(match.group("args"))
-        return func, args
+        return Filter(target, filters)
 
     @classmethod
     def register(cls: Type[Filter], func: Callable) -> Callable:
         cls._filters[func.__qualname__] = func
         return func
 
-    def __init__(self: Filter, target: str, *filters: List[Tuple[Callable, List[Any]]]) -> NoReturn:
+    def __init__(
+        self: Filter, target: str, filters: List[Tuple[Callable, List[Any]]]
+    ) -> NoReturn:
         self._target = target
         self._filters = filters
+
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        return (
+            f"Filter(target={repr(self._target)}, " +
+            f" funcs={self._filters})"
+        )
 
     def __call__(self: Filter, context: Mapping[str, Any]) -> str:
         value = context[self._target]
@@ -73,8 +76,7 @@ class Link:
 @Filter.register
 def get_mul(val, target):
     return [
-        d[target if isinstance(d, dict) else int(target)]
-        for d in val if target in d
+        d[target if isinstance(d, dict) else int(target)] for d in val if target in d
     ]
 
 
@@ -125,23 +127,11 @@ def tabularize(vals, *headings):
         return set(key for item in v for key in item)
 
     if isinstance(vals, dict) and isinstance(list(vals.values())[0], dict):
-        vals = sorted(
-            [dict(_=key, **vals[key]) for key in vals],
-            key=lambda x: x["_"]
-        )
-        headings = (
-            ["_"] +
-            list(
-                headings or
-                (generate_headings(vals) - set(["_"]))
-            )
-        )
+        vals = sorted([dict(_=key, **vals[key]) for key in vals], key=lambda x: x["_"])
+        headings = ["_"] + list(headings or (generate_headings(vals) - set(["_"])))
     elif len(headings) == 0:
         headings = generate_headings(vals)
-    table = (
-        row(headings) +
-        row(("-" * len(heading) for heading in headings), fill="-")
-    )
+    table = row(headings) + row(("-" * len(heading) for heading in headings), fill="-")
     for entry in vals:
         new_row = row(
             str(entry[heading]).strip().replace("\n", " ") if heading in entry else "-"
@@ -170,12 +160,10 @@ def adjust(val, adjustment, precision=0):
     elif adjustment == "~":
         return round(float(val), int(precision))
     else:
-        raise SyntaxError(f"unkown adjustment \"{adjustment}\"")
+        raise SyntaxError(f'unkown adjustment "{adjustment}"')
 
 
-escape_sequences: Mapping[str, str] = {
-    '\\n': '\n',
-}
+escape_sequences: Mapping[str, str] = {"\\n": "\n"}
 
 
 @Filter.register

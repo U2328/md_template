@@ -1,0 +1,138 @@
+{
+  "spells": [
+    {
+        "slotted": [
+            {
+                "level": 0,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Bleed",
+                "school": "Necromancy",
+                "subschool": ""
+            },
+            {
+                "level": 0,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Sift",
+                "school": "Divination",
+                "subschool": ""
+            },
+            {
+                "level": 0,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Brand",
+                "school": "Transmutation",
+                "subschool": "",
+                "notes": ""
+            },
+            {
+                "level": 0,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Stabilize",
+                "school": "Conjuration",
+                "subschool": "Healing"
+            },
+            {
+                "level": 0,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Read Magic",
+                "school": "Divination",
+                "subschool": ""
+            },
+            {
+                "level": 0,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Resistance",
+                "school": "Abjuration",
+                "subschool": ""
+            }
+        ],
+        "totalKnown": "6",
+        "totalPerDay": "-"
+    },
+    {
+        "totalPerDay": "3",
+        "slotted": [
+            {
+                "level": 1,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Comprehend Languages",
+                "school": "Divination",
+                "subschool": ""
+            },
+            {
+                "level": 1,
+                "prepared": 0,
+                "cast": 0,
+                "school": "Abjuration",
+                "name": "Hedging Weapon",
+                "notes": "Casting Time: 1 standard action\nComponents: V, S, DF\n\nRange: personal\nTarget: you\nDuration: 1 minute/level (D)\n\nA weapon made from divine force appears and floats near you.\n\nThis weapon takes the shape of your deity’s favored weapon (if you have no deity, the weapon appears as a simple weapon with special significance to you). You gain one additional weapon at 6th level and every 4 caster levels thereafter—two at 6th, three at 10th, four at 14th, and a maximum of five weapons at 18th level. The weapon averts and deflects attacks, granting you a +1 deflection bonus to AC for each weapon summoned (maximum +5 at 18th level). As a standard action, you can grasp a weapon and throw it as a ranged attack at any target you can see within 30 feet of you (even if it’s a type of weapon that can’t normally be thrown).\n\nOn a successful hit, the weapon deals 2d6 points of force damage to the target. This force weapon has the same threat range and critical multiplier as a standard weapon of its type, but no other special abilities. Because it deals force damage, DR doesn’t apply.\n\nEach weapon thrown lowers the total deflection bonus to your AC by 1 as it disappears immediately after the attack action. The spell immediately ends once you throw all the weapons.",
+                "subschool": "1 sword"
+            },
+            {
+                "level": 1,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Interrogation",
+                "school": "Necromancy",
+                "subschool": ""
+            },
+            {
+                "level": 1,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Barbed Chains",
+                "school": "Conjuration",
+                "notes": "Casting Time 1 standard action\nComponents V, S, M (a length of chain doused with fresh blood)\n\nRange close (25 ft. + 5 ft./level)\nEffect a chain sharpened at one end\nDuration instantaneous\nSaving Throw Will partial (see text); Spell Resistance no\n\nYou summon a chain from another realm, causing it to burst out from the ground and strike a target within the spell’s range. You can have the chain either make a melee attack (dealing 1d6 points of slashing damage) or attempt a trip combat maneuver against the target. The chain uses your base attack bonus plus your key spellcasting ability score modifier as its attack bonus and combat maneuver bonus. On a successful hit or combat maneuver check, the target must attempt a Will save. If it fails its save, the creature is shaken for 1d4 rounds. You summon one additional chain every 3 levels after 1st, for a total of two chains at 4th level, three at 7th level, and a maximum of four at 10th level. Multiple chains can attack the same target but the shaken effect doesn’t stack.",
+                "subschool": "2 chainz +1chain every 3lvl (2@4,3@7,4@10max)"
+            }
+        ],
+        "totalKnown": "4",
+        "bonusSpells": "1"
+    },
+    {
+        "slotted": [
+            {
+                "level": 2,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Blistering Invective",
+                "school": "Evocation",
+                "subschool": ""
+            },
+            {
+                "level": 2,
+                "prepared": 0,
+                "cast": 0,
+                "name": "Cure Moderate Wounds",
+                "school": "Conjuration",
+                "subschool": "Healing"
+            }
+        ],
+        "totalPerDay": "1",
+        "totalKnown": "2",
+        "bonusSpells": "1"
+    },
+    {
+        "slotted": [],
+        "totalPerDay": "",
+        "bonusSpells": "1"
+    },
+    {
+        "slotted": []
+    },
+    {},
+    {},
+    {},
+    {},
+    {
+        "slotted": []
+    }
+  ]
+}
