@@ -1,5 +1,5 @@
-from .parser import *
-from .filters import *
-from .walker import *
+from src.parsing import *
+from src.filtering import *
+from src.walking import *
 
-__all__ = parser.__all__ + filters.__all__ + walker.__all__
+__all__ = parsing.__all__ + filtering.__all__ + walking.__all__

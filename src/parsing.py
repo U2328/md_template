@@ -13,7 +13,7 @@ from typing import (
     Tuple,
 )
 
-from filtering import Filter
+from src.filtering import Filter
 
 __all__ = ("Types", "tokenize", "parse")
 
@@ -38,12 +38,6 @@ class Types(Enum):
     CONDITIONAL = "if"
     ALTERNATIVE = "else"
     ALTERNATE_CONDITIONAL = "elif"
-
-    def __repr__(self):
-        return str(self)
-
-    def __str__(self):
-        return self.name
 
 
 LEGAL_OPERATIONS = [
@@ -196,7 +190,7 @@ def parse_contextmanager(data: List[str]) -> NodeFunc:
     _vars = []
     _data_targets = []
     for _data in data:
-        var, _data_target = _data.split("=")
+        var, _data_target = _data.split("=", maxsplit=1)
         _data_targets.append(Filter.compile_filters(_data_target))
         _vars.append(var)
 

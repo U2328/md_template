@@ -17,3 +17,8 @@ This time not so *hacky*...
 * [x] find a way to put ASR into file
     - [x] put AT into file
     - [x] get it out again...
+* [ ] make proper cli
+    - [x] add sub commands
+    - [x] add core functionality
+    - [ ] add more options
+* [ ] package up this baby

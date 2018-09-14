@@ -14,13 +14,13 @@ example = """## Spells
 ast = parse(example)
 print(ast.pp(), end="\n\n")
 
-with open("src/data.json", "r") as f:
+with open("test_dir/data.json", "r") as f:
     data = json.load(f)
 
-with open("ast.pickle", "wb") as f:
+with open("test_dir/ast.pickle", "wb") as f:
     f.write(pickle.dumps(ast))
 
-with open("ast.pickle", "rb") as f:
+with open("test_dir/ast.pickle", "rb") as f:
     _ast = pickle.loads(f.read())
 
 res = walk(_ast, data)

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from parsing import Types, Node, Context
+from src.parsing import Types, Node, Context
 
 __all__ = ("walk",)
 
@@ -8,11 +8,12 @@ def walk(root: Node, context: Context) -> str:
     output = ""
     last_conditional = None
     for node in root.children:
-        if node.type == Types.TEXT:
+        _type = node.type.value
+        if _type == Types.TEXT.value:
             output += node.contents
-        elif node.type == Types.STAT:
+        elif _type == Types.STAT.value:
             output += str(node.func(context))
-        elif node.type == Types.CONTEXT_INJECT:
+        elif _type == Types.CONTEXT_INJECT.value:
             names, values = node.func(context)
             _context = dict(
                 context.items(),
@@ -22,7 +23,7 @@ def walk(root: Node, context: Context) -> str:
                 }
             )
             output += walk(node, _context)
-        elif node.type == Types.ITERATE:
+        elif _type is Types.ITERATE.value:
             names, iterable = node.func(context)
             for vals in iterable:
                 _context = dict(
@@ -33,16 +34,16 @@ def walk(root: Node, context: Context) -> str:
                     }
                 )
                 output += walk(node, _context)
-        elif node.type == Types.CONDITIONAL:
+        elif _type == Types.CONDITIONAL.value:
             last_conditional = node.func(context)
             if last_conditional:
                 output += walk(node, context)
-        elif node.type == Types.ALTERNATE_CONDITIONAL:
+        elif _type == Types.ALTERNATE_CONDITIONAL.value:
             res = node.func(context)
             if not last_conditional and res:
                 output += walk(node, context)
             last_conditional = res
-        elif node.type == Types.ALTERNATIVE:
+        elif _type == Types.ALTERNATIVE.value:
             if not last_conditional:
                 output += walk(node, context)
     return output
