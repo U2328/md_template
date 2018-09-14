@@ -72,8 +72,7 @@ class Node:
     def pp(self, level=0):
         _self = f"Node(type={self.type}, contents={repr(self.contents)}, func={self.func})"
         if level >= 0:
-            _children = [child.pp(level + 1) for child in self.children]
-            for child in _children:
+            for child in (child.pp(level + 1) for child in self.children):
                 _self += "\n" + "\t" * level + "↪  " + child
         return _self
 
