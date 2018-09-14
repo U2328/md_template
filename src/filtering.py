@@ -50,16 +50,13 @@ class Filter:
         return str(self)
 
     def __str__(self):
-        return (
-            f"Filter(target={repr(self._target)}, " +
-            f" funcs={self._filters})"
-        )
+        return f"Filter(target={repr(self._target)}, " + f" funcs={self._filters})"
 
     def __call__(self: Filter, context: Mapping[str, Any]) -> str:
         value = context[self._target]
         for func, args in self._filters:
             value = func(value, *args)
-        return str(value)
+        return value
 
 
 # == Filters
@@ -76,7 +73,8 @@ class Link:
 @Filter.register
 def get_mul(val, target):
     return [
-        d[target if isinstance(d, dict) else int(target)] for d in val if target in d
+        d[target if isinstance(d, dict) else int(target)]
+        for d in val if target in d
     ]
 
 
@@ -127,7 +125,10 @@ def tabularize(vals, *headings):
         return set(key for item in v for key in item)
 
     if isinstance(vals, dict) and isinstance(list(vals.values())[0], dict):
-        vals = sorted([dict(_=key, **vals[key]) for key in vals], key=lambda x: x["_"])
+        vals = sorted(
+            [dict(_=key, **vals[key]) for key in vals],
+            key=lambda x: x["_"]
+        )
         headings = ["_"] + list(headings or (generate_headings(vals) - set(["_"])))
     elif len(headings) == 0:
         headings = generate_headings(vals)

@@ -4,23 +4,26 @@ from parsing import Types, Node, Context
 __all__ = ("walk",)
 
 
-def walk(root: Node, context: Conext) -> str:
+def walk(root: Node, context: Context) -> str:
     output = ""
     last_conditional = None
     for node in root.children:
         if node.type == Types.TEXT:
             output += node.contents
         elif node.type == Types.STAT:
-            output += node.func(context)
+            output += str(node.func(context))
         elif node.type == Types.CONTEXT_INJECT:
-            name, value = node.func(context)
-            output += walk(node, dict(context.items(), **{name: value}))
+            names, values = node.func(context)
+            output += walk(node, dict(context.items(), **{name: value for name, value in zip(names, values)}))
         elif node.type == Types.ITERATE:
             names, iterable = node.func(context)
-            for x in iterable:
+            for vals in iterable:
                 _context = dict(
                     context.items(),
-                    **{names[i]: val for i, val in enumerate(x)}
+                    **{
+                        names[i]: val
+                        for i, val in enumerate(vals)
+                    }
                 )
                 output += walk(node, _context)
         elif node.type == Types.CONDITIONAL:

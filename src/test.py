@@ -1,26 +1,31 @@
 import json
 import dill as pickle
 
-from parsing import parse, Types
+from parsing import parse
 from walking import walk
 
 
-example =\
-"""## Spells
-{% for level, in spells %}
-{% if "slotted" in level %}
-    {{level|get:"slotted"|tabularize:"level","name","school","subschool","prepared","cast"}}
-
+example = """## Spells
+{% for levelA, levelB in zip(spells, spells) %}
+{% if "slotted" in levelA %}
+{% with level=levelA|get:"slotted" test=levelB %}
+    {{level|tabularize:"level","name","school","subschool","prepared","cast"}}
+    {{test|tabularize:"level","name"}}
+{% endwith %}
 {% endif %}
 {% endfor %}"""
 
 ast = parse(example)
-# print(*ast.children, sep="\n\n")
+print(ast, end="\n\n")
 
-with open("data.json", "r") as f:
+with open("src/data.json", "r") as f:
     data = json.load(f)
 
-_ast = pickle.dumps(ast)
+with open("ast.pickle", "wb") as f:
+    f.write(pickle.dumps(ast))
 
-res = walk(pickle.loads(_ast), data)
+with open("ast.pickle", "rb") as f:
+    _ast = pickle.loads(f.read())
+
+res = walk(_ast, data)
 print(res)

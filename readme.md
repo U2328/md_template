@@ -4,16 +4,16 @@ This time not so *hacky*...
 ## TODO
 * [ ] compiling templates to *AST*
     - [x] tokenize
-    - [ ] build AST
+    - [x] build AST
         * [x] TEXT
         * [x] STAT
-        * [ ] ENV
-    - maybe optimize AST
-* [ ] apply compiled AST
-    - [ ] walk AST & apply
+        * [x] ENV
+    - [ ] optimize AST
+* [x] apply compiled AST
+    - [x] walk AST & apply
         * [x] TEXT
         * [x] STAT
-        * [ ] ENV
-* [ ] find a way to put ASR into file
-    - [ ] put AT into file
-    - [ ] get it out again...
+        * [x] ENV
+* [x] find a way to put ASR into file
+    - [x] put AT into file
+    - [x] get it out again...
