@@ -14,7 +14,14 @@ def walk(root: Node, context: Context) -> str:
             output += str(node.func(context))
         elif node.type == Types.CONTEXT_INJECT:
             names, values = node.func(context)
-            output += walk(node, dict(context.items(), **{name: value for name, value in zip(names, values)}))
+            _context = dict(
+                context.items(),
+                **{
+                    name: value
+                    for name, value in zip(names, values)
+                }
+            )
+            output += walk(node, _context)
         elif node.type == Types.ITERATE:
             names, iterable = node.func(context)
             for vals in iterable:
