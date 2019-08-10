@@ -2,16 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from itertools import takewhile
-from typing import (
-    List,
-    Optional,
-    Callable,
-    Generator,
-    Any,
-    NewType,
-    Mapping,
-    Tuple,
-)
+from typing import List, Optional, Callable, Generator, Any, NewType, Mapping, Tuple
 
 from src.filtering import Filter
 
@@ -64,7 +55,9 @@ class Node:
         return self.pp(-1)
 
     def pp(self, level=0):
-        _self = f"Node(type={self.type}, contents={repr(self.contents)}, func={self.func})"
+        _self = (
+            f"Node(type={self.type}, contents={repr(self.contents)}, func={self.func})"
+        )
         if level >= 0:
             for child in (child.pp(level + 1) for child in self.children):
                 _self += "\n" + "\t" * level + "↪  " + child
@@ -106,7 +99,7 @@ def tokenize(s: str) -> Generator[Node, None, None]:
     yield Node(Types.TEXT, acc)
 
 
-def parse(s: str) -> Node:
+def parse(s: str, *, filter_delimiter: Optional[str] = None) -> Node:
     root: Node = Node()
     current_node: Node = root
     awaited_ends: List[str] = []
@@ -153,7 +146,9 @@ def parse(s: str) -> Node:
         else:
             if tok.type == Types.STAT:
                 try:
-                    tok.func = Filter.compile_filters(tok.contents.strip())
+                    tok.func = Filter.compile_filters(
+                        tok.contents.strip(), filter_delimiter=filter_delimiter
+                    )
                 except Exception as e:
                     print(f"<!> {e}")
                     tok.type = Types.TEXT

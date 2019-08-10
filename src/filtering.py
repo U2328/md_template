@@ -1,10 +1,18 @@
 from __future__ import annotations
-import re
-from functools import partial
-import math
 import ast
 from dateutil import parser as datetime_parser
-from typing import Mapping, Callable, List, Tuple, Any, NoReturn, Type, ClassVar
+import math
+from typing import (
+    Mapping,
+    Callable,
+    List,
+    Tuple,
+    Any,
+    NoReturn,
+    Type,
+    ClassVar,
+    Optional,
+)
 
 
 __all__ = ("Filter",)
@@ -14,8 +22,10 @@ class Filter:
     _filters: ClassVar[Mapping[str, Callable]] = {}
 
     @classmethod
-    def compile_filters(cls: Type[Filter], filter_string: str) -> Filter:
-        parts = filter_string.split("|")
+    def compile_filters(
+        cls: Type[Filter], filter_string: str, filter_delimiter: Optional[str] = None
+    ) -> Filter:
+        parts = filter_string.split(filter_delimiter or "|")
         target = parts[0]
         _filters = parts[1:] if len(target) > 1 else None
         filters = []
@@ -27,10 +37,13 @@ class Filter:
                         args = ast.literal_eval(f"[{_args}]")
                         func = cls._filters[_func]
                         filters.append((func, args))
-                    except KeyError as e:
+                    except KeyError:
                         raise SyntaxError(f'unkown filter "{_func}"')
-                    except AttributeError as e:
+                    except AttributeError:
                         raise SyntaxError("illegal filter syntax")
+                    except ValueError:
+                        # assuming unpacking failed
+                        filters.append((cls._filters[_filter], []))
                 else:
                     raise SyntaxError("illegal filter syntax")
         return Filter(target, filters)
@@ -73,8 +86,7 @@ class Link:
 @Filter.register
 def get_mul(val, target):
     return [
-        d[target if isinstance(d, dict) else int(target)]
-        for d in val if target in d
+        d[target if isinstance(d, dict) else int(target)] for d in val if target in d
     ]
 
 
@@ -114,30 +126,34 @@ def heading(val, level=1):
 
 
 @Filter.register
-def tabularize(vals, *headings):
+def tabularize(vals, row_format):
+    from src.parsing import parse
+    from src.walking import walk
+
+    columns = [
+        parse(f"{{{{{column}}}}}", filter_delimiter=">")
+        for column in row_format.split(";")
+    ]
+    headings = [column.children[0].func._target for column in columns]
+
     if len(vals) == 0:
         return "No values"
 
     def row(coll, fill=" "):
         return "|" + "|".join(fill + str(val) + fill for val in coll) + "|\n"
 
-    def generate_headings(v):
-        return set(key for item in v for key in item)
-
     if isinstance(vals, dict) and all(isinstance(val, dict) for val in vals.values()):
         vals = sorted(
-            [dict(_=key, **val) for key, val in vals.items()],
-            key=lambda x: x["_"]
+            [{headings[0]: key, **val} for key, val in vals.items()],
+            key=lambda x: x[headings[0]],
         )
-        headings = ["_"] + list(headings or (generate_headings(vals) - set(["_"])))
-    elif len(headings) == 0:
-        headings = generate_headings(vals)
+        headings = headings
 
     table = row(headings) + row(("-" * len(heading) for heading in headings), fill="-")
     for entry in vals:
         new_row = row(
-            str(entry[heading]).strip().replace("\n", " ") if heading in entry else "-"
-            for heading in headings
+            walk(column, entry, fail_default="-").strip().replace("\n ", " ")
+            for column in columns
         )
         table += new_row
     return table
@@ -151,6 +167,11 @@ def date(val, output_format="%x %X"):
 @Filter.register
 def frmt(val, output_format):
     return f"{{:{output_format}}}".format(val)
+
+
+@Filter.register
+def render_bool(val):
+    return ["✗", "✔"][bool(val)]
 
 
 @Filter.register

@@ -1,6 +1,8 @@
 {
-    "python.pythonPath": "/home/timfi/.local/share/virtualenvs/md_template-j_IL8rbe/bin/python",
+    "python.pythonPath": "/home/timfi/.local/share/virtualenvs/md_template-k23pEzcd/bin/python",
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black"
 }
