@@ -4,16 +4,15 @@ from src.parsing import Types, Node, Context
 __all__ = ("walk",)
 
 
-def walk(root: Node, context: Context) -> str:
+def walk(root: Node, context: Context, *, skip_fails=False) -> str:
     output = ""
     last_conditional = None
     for node in root.children:
-        _type = node.type.value
-        if _type == Types.TEXT.value:
+        if node.type is Types.TEXT:
             output += node.contents
-        elif _type == Types.STAT.value:
+        elif node.type is Types.STAT:
             output += str(node.func(context))
-        elif _type == Types.CONTEXT_INJECT.value:
+        elif node.type is Types.CONTEXT_INJECT:
             names, values = node.func(context)
             _context = dict(
                 context.items(),
@@ -23,7 +22,7 @@ def walk(root: Node, context: Context) -> str:
                 }
             )
             output += walk(node, _context)
-        elif _type is Types.ITERATE.value:
+        elif node.type is Types.ITERATE:
             names, iterable = node.func(context)
             for vals in iterable:
                 _context = dict(
@@ -34,16 +33,16 @@ def walk(root: Node, context: Context) -> str:
                     }
                 )
                 output += walk(node, _context)
-        elif _type == Types.CONDITIONAL.value:
+        elif node.type is Types.CONDITIONAL:
             last_conditional = node.func(context)
             if last_conditional:
                 output += walk(node, context)
-        elif _type == Types.ALTERNATE_CONDITIONAL.value:
+        elif node.type is Types.ALTERNATE_CONDITIONAL:
             res = node.func(context)
             if not last_conditional and res:
                 output += walk(node, context)
             last_conditional = res
-        elif _type == Types.ALTERNATIVE.value:
+        elif node.type is Types.ALTERNATIVE:
             if not last_conditional:
                 output += walk(node, context)
     return output

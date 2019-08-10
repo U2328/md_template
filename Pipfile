@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 python-dateutil = "*"
+dill = "*"
 
 [dev-packages]
 mypy = "*"

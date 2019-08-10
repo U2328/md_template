@@ -116,7 +116,7 @@ def heading(val, level=1):
 @Filter.register
 def tabularize(vals, *headings):
     if len(vals) == 0:
-        return ""
+        return "No values"
 
     def row(coll, fill=" "):
         return "|" + "|".join(fill + str(val) + fill for val in coll) + "|\n"
@@ -124,14 +124,15 @@ def tabularize(vals, *headings):
     def generate_headings(v):
         return set(key for item in v for key in item)
 
-    if isinstance(vals, dict) and isinstance(list(vals.values())[0], dict):
+    if isinstance(vals, dict) and all(isinstance(val, dict) for val in vals.values()):
         vals = sorted(
-            [dict(_=key, **vals[key]) for key in vals],
+            [dict(_=key, **val) for key, val in vals.items()],
             key=lambda x: x["_"]
         )
         headings = ["_"] + list(headings or (generate_headings(vals) - set(["_"])))
     elif len(headings) == 0:
         headings = generate_headings(vals)
+
     table = row(headings) + row(("-" * len(heading) for heading in headings), fill="-")
     for entry in vals:
         new_row = row(
